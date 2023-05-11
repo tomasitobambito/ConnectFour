@@ -1,4 +1,5 @@
 from random import randint
+from copy import deepcopy
 
 def print_board(board):
     """Prints connect 4 board to the command line
@@ -88,7 +89,7 @@ def detect_four(board):
     return False
 
 
-def generate_computer_move(board):
+def generate_computer_move(board, depth):
     """Calculates the best move based on the current board.
 
     Args:
@@ -97,5 +98,76 @@ def generate_computer_move(board):
     Returns:
         int: The ID of the column that the AI chooses to play.
     """
-    return randint(0,6)
+    scores = []
+
+    for i in range(7):
+        scores.append(play_multi_board(board, i, depth))
+    
+    print(scores)
+    
+    return scores.index(max(scores))
+
+
+def play_board(board):
+    """Continue playing random moves on the current board and return the winner.
+
+    Args:
+        startboard (ndarray): 2D list containing the connect 4 board.
+
+    Returns:
+        str: Returns 'tie' in the case of a tie, 'player' in case of the player winning and 
+        'computer' in case of the computer winning 
+    """
+    if detect_four(board):
+        return 'computer'
+
+    player = True
+
+    while True:
+        while True:
+            try:
+                drop_disc(board, randint(0, 6), player)
+                break
+            except ValueError:
+                pass
+        
+        if is_board_full(board):
+            return "tie"
+        
+        if detect_four(board):
+            return "player" if player else "computer"
+        
+        player = not player
+
+def play_multi_board(startboard, startcol, count):
+    """Continue from a certain starting move and play random moves on count boards to evaluate 
+    how effective each move is
+
+    Args:
+        startboard (ndarray): 2D list containing the connect 4 board.
+        startcol (int): Column played as starting move.
+        count (int): 'Depth' of the calculation (how many rounds are played).
+
+    Returns:
+        int: Evaluation of the suggested move, higher number is better.
+    """
+    player = False
+    score = 0
+
+    for i in range(count):
+        board = deepcopy(startboard)
+        
+        try:
+            drop_disc(board, startcol, player)
+        except ValueError:
+            pass
+
+        winner = play_board(board)
+
+        if winner == 'player':
+            score -= 1
+        elif winner == 'computer':
+            score += 1 
+
+    return score
 

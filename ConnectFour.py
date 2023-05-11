@@ -20,6 +20,11 @@ while True:
         helper.print_board(board)
         print("The board is full, it is a tie")
         break
+    
+    if helper.detect_four(board):
+        helper.print_board(board)
+        print("some fuck won idk")
+        break
 
     player = not player
     print(columnId, "was played")

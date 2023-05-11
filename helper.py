@@ -54,6 +54,40 @@ def is_board_full(board):
             
     return True
 
+def detect_four(board):
+    """Checks if a win condition has been reached on the board.
+
+    Args:
+        board (ndarray): 2D list containing the connect 4 board.
+
+    Returns:
+        bool: True if someoneo has won, False otherwise.
+    """
+    for icol in range(7):
+        for irow in range(6):
+            if board[icol][irow] != ".":
+                # Check horizontally
+                if icol <= 3:
+                    if board[icol][irow] == board[icol+1][irow] == board[icol+2][irow] == board[icol+3][irow]:
+                        return True
+
+                # Check vertically
+                if irow <= 2:
+                    if board[icol][irow] == board[icol][irow+1] == board[icol][irow+2] == board[icol][irow+3]:
+                        return True
+                
+                # Check diagonally
+                if icol <= 3 and irow <= 2:
+                    if board[icol][irow] == board[icol+1][irow+1] == board[icol+2][irow+2] == board[icol+3][irow+3]:
+                        return True
+
+                # Check diagonally (again because other direction exists)
+                if icol <= 3 and irow >= 3:
+                    if board[icol][irow] == board[icol+1][irow-1] == board[icol+2][irow-3] == board[icol+3][irow-3]:
+                        return True
+    return False
+
+
 def generate_computer_move(board):
     """Calculates the best move based on the current board.
 

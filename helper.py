@@ -1,4 +1,4 @@
-from random import randint
+from random import random
 from copy import deepcopy
 
 def print_board(board):
@@ -104,7 +104,7 @@ def generate_computer_move(board, depth):
         scores.append(play_multi_board(board, i, depth))
     
     print(scores)
-    
+
     return scores.index(max(scores))
 
 
@@ -126,7 +126,7 @@ def play_board(board):
     while True:
         while True:
             try:
-                drop_disc(board, randint(0, 6), player)
+                drop_disc(board, int(random()*7), player) 
                 break
             except ValueError:
                 pass

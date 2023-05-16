@@ -1,4 +1,9 @@
+import cProfile
+import pstats
 import helper
+
+profiler = cProfile.Profile()
+profiler.enable()
 
 board = [['.'] * 6 for i in range(7)]
 player = True
@@ -23,7 +28,7 @@ while True:
 
         # check if move is legal
         try:
-            helper.drop_disc(board, columnId, player)
+            playedcol, playedrow = helper.drop_disc(board, columnId, player)
             break
         except ValueError:
             print("That move is not valid")
@@ -41,4 +46,7 @@ while True:
     player = not player
     print(columnId, "was played")
 
-
+profiler.disable()
+stats = pstats.Stats(profiler).sort_stats('ncalls')
+stats.dump_stats('out.prof')
+stats.print_stats()

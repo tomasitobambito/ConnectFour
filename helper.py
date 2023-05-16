@@ -1,5 +1,4 @@
 from random import random
-from copy import deepcopy
 
 def print_board(board):
     """Prints connect 4 board to the command line
@@ -25,6 +24,9 @@ def drop_disc(board, columnid, player):
         columnid (int): ID of the column being modified.
         player (bool): Boolean to determine whether the player is playing or the computer is playing.
 
+    Returns:
+        ndarray: List of length 2 containing the last played column and row (in that order).    
+
     Raises:
         ValueError: Error raised when column is full.
     """
@@ -37,6 +39,8 @@ def drop_disc(board, columnid, player):
     for i in range(1, len(board[columnid]) + 1):
         if board[columnid][-i] == ".":
             board[columnid][-i] = symbol
+            pos = [columnid, -i + len(board[columnid])]
+            return pos
             break
 
 def is_board_full(board):
@@ -55,11 +59,13 @@ def is_board_full(board):
             
     return True
 
-def detect_four(board):
+def detect_four(board, lastcol, lastrow):
     """Checks if a win condition has been reached on the board.
 
     Args:
         board (ndarray): 2D list containing the connect 4 board.
+        lastcol (int): ID of the last played column.
+        lastrow (int): ID of the last played row.
 
     Returns:
         bool: True if someoneo has won, False otherwise.
@@ -126,7 +132,7 @@ def play_board(board):
     while True:
         while True:
             try:
-                drop_disc(board, int(random()*7), player) 
+                playedcol, playedrow = drop_disc(board, int(random()*7), player) 
                 break
             except ValueError:
                 pass
@@ -134,7 +140,7 @@ def play_board(board):
         if is_board_full(board):
             return "tie"
         
-        if detect_four(board):
+        if detect_four(board, playedcol, playedrow):
             return "player" if player else "computer"
         
         player = not player
@@ -155,7 +161,7 @@ def play_multi_board(startboard, startcol, count):
     score = 0
 
     for i in range(count):
-        board = deepcopy(startboard)
+        board = [[cell for cell in column] for column in startboard]
         
         try:
             drop_disc(board, startcol, player)
